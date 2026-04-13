@@ -3,111 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Águas de Joinville</title>
+    <title>Simulador Águas de Joinville 2026</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #e9ecef;
             color: #333;
             display: flex;
             justify-content: center;
-            padding: 20px;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
         }
         .container {
             background: white;
-            padding: 30px;
+            padding: 15px 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 500px;
+            max-width: 450px;
             width: 100%;
+            display: flex;
+            flex-direction: column;
         }
-        h2 { color: #0056b3; text-align: center; margin-top: 0; }
-        .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        h2 { color: #0056b3; text-align: center; margin: 5px 0 15px; font-size: 1.4em; }
+        h3 { font-size: 1em; margin: 10px 0 5px; color: #555; border-bottom: 1px solid #ddd; }
+        
+        .grid-tarifas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .input-group { margin-bottom: 5px; }
+        label { display: block; font-weight: bold; font-size: 0.75em; margin-bottom: 2px; color: #666; }
         input {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
+            padding: 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
+            font-size: 0.9em;
         }
         button {
             width: 100%;
-            background-color: #0056b3;
+            background-color: #28a745;
             color: white;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: bold;
+            margin: 10px 0;
         }
-        button:hover { background-color: #004494; }
+        button:hover { background-color: #218838; }
+
         #resultado {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e7f3ff;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
             border-radius: 8px;
-            display: none;
+            padding: 10px;
+            font-size: 0.85em;
         }
         .item-faixa {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+        }
+        .subtotal-box {
+            background: #e7f3ff;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-weight: bold;
         }
         .total {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: bold;
             color: #d9534f;
             border-top: 2px solid #0056b3;
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
             text-align: right;
         }
+        .scroll-area { max-height: 250px; overflow-y: auto; padding-right: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Calculadora Águas de Joinville</h2>
+    <h2>Simulador Joinville 2026</h2>
     
-    <div class="section">
-        <label>Consumo Total (m³):</label>
+    <div class="input-group">
+        <label>Consumo Estimado (m³):</label>
         <input type="number" id="consumoInput" placeholder="Ex: 13" step="0.01">
-        <button onclick="calcular()">Calcular Conta</button>
     </div>
+    
+    <button onclick="calcular()">CALCULAR TOTAL</button>
 
-    <div class="section">
-        <h3>Configurar Tarifas (R$)</h3>
-        <label>Tarifa Fixa:</label>
-        <input type="number" id="tFixa" value="33.50" step="0.01">
-        <label>Faixa 0 a 10 (por m³):</label>
-        <input type="number" id="t1" value="1.43" step="0.01">
-        <label>Faixa 11 a 15 (por m³):</label>
-        <input type="number" id="t2" value="9.49" step="0.01">
-        <label>Faixa 16 a 25 (por m³):</label>
-        <input type="number" id="t3" value="9.54" step="0.01">
-        <label>Faixa 26 a 35 (por m³):</label>
-        <input type="number" id="t4" value="12.64" step="0.01">
-        <label>Acima de 35 (por m³):</label>
-        <input type="number" id="t5" value="13.07" step="0.01">
-    </div>
+    <div class="scroll-area">
+        <h3>Tarifas de Água</h3>
+        <div class="grid-tarifas">
+            <div class="input-group"><label>T. Fixa Água:</label><input type="number" id="tFixa" value="33.50"></div>
+            <div class="input-group"><label>0 a 10m³:</label><input type="number" id="t1" value="1.43"></div>
+            <div class="input-group"><label>11 a 15m³:</label><input type="number" id="t2" value="9.49"></div>
+            <div class="input-group"><label>16 a 25m³:</label><input type="number" id="t3" value="9.54"></div>
+            <div class="input-group"><label>26 a 35m³:</label><input type="number" id="t4" value="12.64"></div>
+            <div class="input-group"><label>Acima 35m³:</label><input type="number" id="t5" value="13.07"></div>
+        </div>
 
-    <div id="resultado">
-        <h4>Detalhamento:</h4>
-        <div id="detalhes"></div>
-        <div class="total" id="valorTotal"></div>
+        <h3>Tarifas de Esgoto</h3>
+        <div class="grid-tarifas">
+            <div class="input-group"><label>T. Fixa Esgoto:</label><input type="number" id="tFixaEsg" value="27.94"></div>
+            <div class="input-group"><label>% Variável:</label><input type="number" id="pEsg" value="100"></div>
+        </div>
+
+        <div id="resultado" style="display:none;">
+            <div id="detalhes"></div>
+            <div class="total" id="valorTotal"></div>
+        </div>
     </div>
 </div>
 
 <script>
 function calcular() {
     const consumo = parseFloat(document.getElementById('consumoInput').value) || 0;
-    const fixa = parseFloat(document.getElementById('tFixa').value);
+    const fixaAgua = parseFloat(document.getElementById('tFixa').value);
+    const fixaEsgoto = parseFloat(document.getElementById('tFixaEsg').value);
+    const percEsgoto = parseFloat(document.getElementById('pEsg').value) / 100;
     
-    // Tarifas
     const tarifas = [
         parseFloat(document.getElementById('t1').value),
         parseFloat(document.getElementById('t2').value),
@@ -116,43 +141,37 @@ function calcular() {
         parseFloat(document.getElementById('t5').value)
     ];
 
-    // Limites das faixas
     const limites = [10, 5, 10, 10, Infinity]; 
-    const nomesFaixas = ["0-10 m³", "11-15 m³", "16-25 m³", "26-35 m³", "Acima de 35 m³"];
+    const nomesFaixas = ["0-10", "11-15", "16-25", "26-35", "35+"];
 
     let consumoRestante = consumo;
-    let totalVariavel = 0;
-    let htmlDetalhes = `<div class="item-faixa"><span>Tarifa Fixa:</span> <span>R$ ${fixa.toFixed(2)}</span></div>`;
+    let totalVariavelAgua = 0;
+    let html = `<strong>Detalhamento Água:</strong><br>`;
+    html += `<div class="item-faixa"><span>Tarifa Fixa Água:</span> <span>R$ ${fixaAgua.toFixed(2)}</span></div>`;
 
     for (let i = 0; i < tarifas.length; i++) {
-        let consumoNaFaixa = 0;
-        
         if (consumoRestante > 0) {
-            consumoNaFaixa = Math.min(consumoRestante, limites[i]);
+            let consumoNaFaixa = Math.min(consumoRestante, limites[i]);
             let custoFaixa = consumoNaFaixa * tarifas[i];
-            totalVariavel += custoFaixa;
-            
-            htmlDetalhes += `
-                <div class="item-faixa">
-                    <span>Faixa ${nomesFaixas[i]} (${consumoNaFaixa.toFixed(2)} un.):</span>
-                    <span>R$ ${custoFaixa.toFixed(2)}</span>
-                </div>`;
-            
+            totalVariavelAgua += custoFaixa;
+            html += `<div class="item-faixa"><span>Faixa ${nomesFaixas[i]} m³:</span> <span>R$ ${custoFaixa.toFixed(2)}</span></div>`;
             consumoRestante -= consumoNaFaixa;
-        } else {
-            // Faixas não atingidas
-            htmlDetalhes += `
-                <div class="item-faixa" style="color:#999">
-                    <span>Faixa ${nomesFaixas[i]} (0 un.):</span>
-                    <span>R$ 0,00</span>
-                </div>`;
         }
     }
 
-    const valorFinal = fixa + totalVariavel;
+    const subAgua = fixaAgua + totalVariavelAgua;
+    const subVariavelEsgoto = totalVariavelAgua * percEsgoto;
+    const subEsgoto = fixaEsgoto + subVariavelEsgoto;
+    const totalGeral = subAgua + subEsgoto;
 
-    document.getElementById('detalhes').innerHTML = htmlDetalhes;
-    document.getElementById('valorTotal').innerHTML = `Total: R$ ${valorFinal.toFixed(2)}`;
+    html += `<div class="subtotal-box">Subtotal Água: R$ ${subAgua.toFixed(2)}</div>`;
+    html += `<br><strong>Detalhamento Esgoto:</strong><br>`;
+    html += `<div class="item-faixa"><span>Tarifa Fixa Esgoto:</span> <span>R$ ${fixaEsgoto.toFixed(2)}</span></div>`;
+    html += `<div class="item-faixa"><span>Consumo Esgoto (${(percEsgoto*100)}%):</span> <span>R$ ${subVariavelEsgoto.toFixed(2)}</span></div>`;
+    html += `<div class="subtotal-box">Subtotal Esgoto: R$ ${subEsgoto.toFixed(2)}</div>`;
+
+    document.getElementById('detalhes').innerHTML = html;
+    document.getElementById('valorTotal').innerHTML = `TOTAL CONTA: R$ ${totalGeral.toFixed(2)}`;
     document.getElementById('resultado').style.display = 'block';
 }
 </script>
