@@ -42,7 +42,7 @@
             align-items: flex-start;
         }
 
-        .config-side { flex: 1; }
+        .config-side { flex: 1.2; } /* Aumentado levemente para caber os textos novos */
         .result-side { 
             flex: 1; 
             background: #f8fbff; 
@@ -53,7 +53,7 @@
         }
 
         .input-group { margin-bottom: 12px; }
-        label { display: block; font-weight: bold; font-size: 0.8em; margin-bottom: 4px; color: #555; }
+        label { display: block; font-weight: bold; font-size: 0.75em; margin-bottom: 4px; color: #555; text-transform: uppercase; }
         input {
             width: 100%;
             padding: 8px;
@@ -111,7 +111,7 @@
         @media (max-width: 768px) {
             body { height: auto; overflow: auto; padding: 20px 0; }
             .main-layout { flex-direction: column; }
-            .container { width: 90%; }
+            .container { width: 90%; height: auto; }
         }
     </style>
 </head>
@@ -123,7 +123,7 @@
     <div class="main-layout">
         <div class="config-side">
             <div class="input-group">
-                <label style="color: #0056b3; font-size: 1em;">Consumo Mensal (m³):</label>
+                <label style="color: #0056b3; font-size: 0.9em;">Consumo Mensal (m³):</label>
                 <input type="number" id="consumoInput" placeholder="Ex: 13" step="0.01">
             </div>
             
@@ -132,18 +132,18 @@
             <div class="grid-tarifas">
                 <div class="input-group"><label>Fixa Água (R$):</label><input type="number" id="tFixa" value="33.50"></div>
                 <div class="input-group"><label>Fixa Esgoto (R$):</label><input type="number" id="tFixaEsg" value="27.94"></div>
-                <div class="input-group"><label>Faixa 0-10:</label><input type="number" id="t1" value="1.43"></div>
-                <div class="input-group"><label>Faixa 11-15:</label><input type="number" id="t2" value="9.49"></div>
-                <div class="input-group"><label>Faixa 16-25:</label><input type="number" id="t3" value="9.54"></div>
-                <div class="input-group"><label>Faixa 26-35:</label><input type="number" id="t4" value="12.64"></div>
-                <div class="input-group"><label>Acima de 35:</label><input type="number" id="t5" value="13.07"></div>
+                <div class="input-group"><label>Faixa 0-10 (R$):</label><input type="number" id="t1" value="1.43"></div>
+                <div class="input-group"><label>Faixa 11-15 (R$):</label><input type="number" id="t2" value="9.49"></div>
+                <div class="input-group"><label>Faixa 16-25 (R$):</label><input type="number" id="t3" value="9.54"></div>
+                <div class="input-group"><label>Faixa 26-35 (R$):</label><input type="number" id="t4" value="12.64"></div>
+                <div class="input-group"><label>Acima de 35 (R$):</label><input type="number" id="t5" value="13.07"></div>
                 <div class="input-group"><label>% Esgoto:</label><input type="number" id="pEsg" value="100"></div>
             </div>
         </div>
 
         <div class="result-side" id="resultadoArea">
             <div id="instrucao" style="color: #666; text-align: center; margin-top: 100px;">
-                Insira o consumo e clique em calcular para ver o detalhamento.
+                Preencha o consumo e as tarifas para detalhar os custos.
             </div>
             <div id="detalhes" style="display:none;"></div>
             <div class="total" id="valorTotal" style="display:none;"></div>
@@ -152,7 +152,6 @@
 </div>
 
 <script>
-// Função auxiliar para formatar em moeda brasileira
 function formatarBRL(valor) {
     return valor.toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
