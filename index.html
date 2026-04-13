@@ -14,8 +14,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Ocupa a altura total da tela */
-            overflow: hidden; /* Remove scroll do body */
+            height: 100vh;
+            overflow: hidden;
         }
         .container {
             background: white;
@@ -23,7 +23,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             width: 95%;
-            max-width: 900px; /* Largura expandida para desktop */
+            max-width: 900px;
             display: flex;
             flex-direction: column;
         }
@@ -36,7 +36,6 @@
             padding-bottom: 10px;
         }
         
-        /* Layout em colunas para Desktop */
         .main-layout {
             display: flex;
             gap: 25px;
@@ -109,7 +108,6 @@
             text-align: right;
         }
 
-        /* Ajuste para telas pequenas */
         @media (max-width: 768px) {
             body { height: auto; overflow: auto; padding: 20px 0; }
             .main-layout { flex-direction: column; }
@@ -147,14 +145,18 @@
             <div id="instrucao" style="color: #666; text-align: center; margin-top: 100px;">
                 Insira o consumo e clique em calcular para ver o detalhamento.
             </div>
-            <div id="detalhes" style="display:none;">
-                </div>
+            <div id="detalhes" style="display:none;"></div>
             <div class="total" id="valorTotal" style="display:none;"></div>
         </div>
     </div>
 </div>
 
 <script>
+// Função auxiliar para formatar em moeda brasileira
+function formatarBRL(valor) {
+    return valor.toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function calcular() {
     const consumo = parseFloat(document.getElementById('consumoInput').value) || 0;
     const fixaAgua = parseFloat(document.getElementById('tFixa').value);
@@ -176,14 +178,14 @@ function calcular() {
     let totalVariavelAgua = 0;
     
     let html = `<strong style="color:#0056b3">Detalhamento Água</strong><br><br>`;
-    html += `<div class="item-faixa"><span>Taxa Fixa Água:</span> <span>R$ ${fixaAgua.toFixed(2)}</span></div>`;
+    html += `<div class="item-faixa"><span>Taxa Fixa Água:</span> <span>R$ ${formatarBRL(fixaAgua)}</span></div>`;
 
     for (let i = 0; i < tarifas.length; i++) {
         if (consumoRestante > 0) {
             let consumoNaFaixa = Math.min(consumoRestante, limites[i]);
             let custoFaixa = consumoNaFaixa * tarifas[i];
             totalVariavelAgua += custoFaixa;
-            html += `<div class="item-faixa"><span>Consumo ${nomesFaixas[i]} m³:</span> <span>R$ ${custoFaixa.toFixed(2)}</span></div>`;
+            html += `<div class="item-faixa"><span>Consumo ${nomesFaixas[i]} m³:</span> <span>R$ ${formatarBRL(custoFaixa)}</span></div>`;
             consumoRestante -= consumoNaFaixa;
         }
     }
@@ -193,11 +195,11 @@ function calcular() {
     const subEsgoto = fixaEsgoto + subVariavelEsgoto;
     const totalGeral = subAgua + subEsgoto;
 
-    html += `<div class="subtotal-box">Total Água: R$ ${subAgua.toFixed(2)}</div>`;
+    html += `<div class="subtotal-box">Total Água: R$ ${formatarBRL(subAgua)}</div>`;
     html += `<br><strong style="color:#0056b3">Detalhamento Esgoto</strong><br><br>`;
-    html += `<div class="item-faixa"><span>Taxa Fixa Esgoto:</span> <span>R$ ${fixaEsgoto.toFixed(2)}</span></div>`;
-    html += `<div class="item-faixa"><span>Variável Esgoto (${(percEsgoto*100)}%):</span> <span>R$ ${subVariavelEsgoto.toFixed(2)}</span></div>`;
-    html += `<div class="subtotal-box">Total Esgoto: R$ ${subEsgoto.toFixed(2)}</div>`;
+    html += `<div class="item-faixa"><span>Taxa Fixa Esgoto:</span> <span>R$ ${formatarBRL(fixaEsgoto)}</span></div>`;
+    html += `<div class="item-faixa"><span>Variável Esgoto (${(percEsgoto*100)}%):</span> <span>R$ ${formatarBRL(subVariavelEsgoto)}</span></div>`;
+    html += `<div class="subtotal-box">Total Esgoto: R$ ${formatarBRL(subEsgoto)}</div>`;
 
     document.getElementById('instrucao').style.display = 'none';
     const detalhesDiv = document.getElementById('detalhes');
@@ -206,7 +208,7 @@ function calcular() {
     detalhesDiv.innerHTML = html;
     detalhesDiv.style.display = 'block';
     
-    totalDiv.innerHTML = `TOTAL: R$ ${totalGeral.toFixed(2)}`;
+    totalDiv.innerHTML = `TOTAL: R$ ${formatarBRL(totalGeral)}`;
     totalDiv.style.display = 'block';
 }
 </script>
