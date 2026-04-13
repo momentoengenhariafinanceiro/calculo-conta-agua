@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Águas de Joinville</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 { color: #0056b3; text-align: center; margin-top: 0; }
+        .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            background-color: #0056b3;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        button:hover { background-color: #004494; }
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3ff;
+            border-radius: 8px;
+            display: none;
+        }
+        .item-faixa {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            border-top: 2px solid #0056b3;
+            margin-top: 10px;
+            padding-top: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Calculadora Águas de Joinville</h2>
+    
+    <div class="section">
+        <label>Consumo Total (m³):</label>
+        <input type="number" id="consumoInput" placeholder="Ex: 13" step="0.01">
+        <button onclick="calcular()">Calcular Conta</button>
+    </div>
+
+    <div class="section">
+        <h3>Configurar Tarifas (R$)</h3>
+        <label>Tarifa Fixa:</label>
+        <input type="number" id="tFixa" value="33.50" step="0.01">
+        <label>Faixa 0 a 10 (por m³):</label>
+        <input type="number" id="t1" value="1.43" step="0.01">
+        <label>Faixa 11 a 15 (por m³):</label>
+        <input type="number" id="t2" value="9.49" step="0.01">
+        <label>Faixa 16 a 25 (por m³):</label>
+        <input type="number" id="t3" value="9.54" step="0.01">
+        <label>Faixa 26 a 35 (por m³):</label>
+        <input type="number" id="t4" value="12.64" step="0.01">
+        <label>Acima de 35 (por m³):</label>
+        <input type="number" id="t5" value="13.07" step="0.01">
+    </div>
+
+    <div id="resultado">
+        <h4>Detalhamento:</h4>
+        <div id="detalhes"></div>
+        <div class="total" id="valorTotal"></div>
+    </div>
+</div>
+
+<script>
+function calcular() {
+    const consumo = parseFloat(document.getElementById('consumoInput').value) || 0;
+    const fixa = parseFloat(document.getElementById('tFixa').value);
+    
+    // Tarifas
+    const tarifas = [
+        parseFloat(document.getElementById('t1').value),
+        parseFloat(document.getElementById('t2').value),
+        parseFloat(document.getElementById('t3').value),
+        parseFloat(document.getElementById('t4').value),
+        parseFloat(document.getElementById('t5').value)
+    ];
+
+    // Limites das faixas
+    const limites = [10, 5, 10, 10, Infinity]; 
+    const nomesFaixas = ["0-10 m³", "11-15 m³", "16-25 m³", "26-35 m³", "Acima de 35 m³"];
+
+    let consumoRestante = consumo;
+    let totalVariavel = 0;
+    let htmlDetalhes = `<div class="item-faixa"><span>Tarifa Fixa:</span> <span>R$ ${fixa.toFixed(2)}</span></div>`;
+
+    for (let i = 0; i < tarifas.length; i++) {
+        let consumoNaFaixa = 0;
+        
+        if (consumoRestante > 0) {
+            consumoNaFaixa = Math.min(consumoRestante, limites[i]);
+            let custoFaixa = consumoNaFaixa * tarifas[i];
+            totalVariavel += custoFaixa;
+            
+            htmlDetalhes += `
+                <div class="item-faixa">
+                    <span>Faixa ${nomesFaixas[i]} (${consumoNaFaixa.toFixed(2)} un.):</span>
+                    <span>R$ ${custoFaixa.toFixed(2)}</span>
+                </div>`;
+            
+            consumoRestante -= consumoNaFaixa;
+        } else {
+            // Faixas não atingidas
+            htmlDetalhes += `
+                <div class="item-faixa" style="color:#999">
+                    <span>Faixa ${nomesFaixas[i]} (0 un.):</span>
+                    <span>R$ 0,00</span>
+                </div>`;
+        }
+    }
+
+    const valorFinal = fixa + totalVariavel;
+
+    document.getElementById('detalhes').innerHTML = htmlDetalhes;
+    document.getElementById('valorTotal').innerHTML = `Total: R$ ${valorFinal.toFixed(2)}`;
+    document.getElementById('resultado').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
