@@ -3,125 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Águas de Joinville 2026</title>
+    <title>Calculadora Águas de Joinville</title>
     <style>
         * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #e9ecef;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f0f4f8;
             color: #333;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
+            height: 100vh; /* Ocupa a altura total da tela */
+            overflow: hidden; /* Remove scroll do body */
         }
         .container {
             background: white;
-            padding: 15px 25px;
+            padding: 20px 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 900px; /* Largura expandida para desktop */
             display: flex;
             flex-direction: column;
         }
-        h2 { color: #0056b3; text-align: center; margin: 5px 0 15px; font-size: 1.4em; }
-        h3 { font-size: 1em; margin: 10px 0 5px; color: #555; border-bottom: 1px solid #ddd; }
+        h2 { 
+            color: #0056b3; 
+            text-align: center; 
+            margin: 0 0 20px 0; 
+            font-size: 1.6em;
+            border-bottom: 2px solid #e7f3ff;
+            padding-bottom: 10px;
+        }
+        
+        /* Layout em colunas para Desktop */
+        .main-layout {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .config-side { flex: 1; }
+        .result-side { 
+            flex: 1; 
+            background: #f8fbff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #ddecff;
+            min-height: 380px;
+        }
+
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; font-size: 0.8em; margin-bottom: 4px; color: #555; }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
         
         .grid-tarifas {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 10px;
         }
-        .input-group { margin-bottom: 5px; }
-        label { display: block; font-weight: bold; font-size: 0.75em; margin-bottom: 2px; color: #666; }
-        input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
+
         button {
             width: 100%;
-            background-color: #28a745;
+            background-color: #0056b3;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
-            margin: 10px 0;
+            margin: 15px 0;
+            transition: background 0.2s;
         }
-        button:hover { background-color: #218838; }
+        button:hover { background-color: #004494; }
 
-        #resultado {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.85em;
-        }
         .item-faixa {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+            font-size: 0.85em;
         }
         .subtotal-box {
-            background: #e7f3ff;
-            padding: 5px;
-            margin: 5px 0;
+            background: #e1efff;
+            padding: 6px 10px;
+            margin: 8px 0;
             border-radius: 4px;
             font-weight: bold;
+            font-size: 0.9em;
+            color: #004494;
         }
         .total {
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #d9534f;
-            border-top: 2px solid #0056b3;
-            margin-top: 8px;
-            padding-top: 8px;
+            border-top: 3px solid #0056b3;
+            margin-top: 15px;
+            padding-top: 10px;
             text-align: right;
         }
-        .scroll-area { max-height: 250px; overflow-y: auto; padding-right: 5px; }
+
+        /* Ajuste para telas pequenas */
+        @media (max-width: 768px) {
+            body { height: auto; overflow: auto; padding: 20px 0; }
+            .main-layout { flex-direction: column; }
+            .container { width: 90%; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Simulador Joinville 2026</h2>
+    <h2>Calculadora Águas de Joinville</h2>
     
-    <div class="input-group">
-        <label>Consumo Estimado (m³):</label>
-        <input type="number" id="consumoInput" placeholder="Ex: 13" step="0.01">
-    </div>
-    
-    <button onclick="calcular()">CALCULAR TOTAL</button>
+    <div class="main-layout">
+        <div class="config-side">
+            <div class="input-group">
+                <label style="color: #0056b3; font-size: 1em;">Consumo Mensal (m³):</label>
+                <input type="number" id="consumoInput" placeholder="Ex: 13" step="0.01">
+            </div>
+            
+            <button onclick="calcular()">CALCULAR VALOR</button>
 
-    <div class="scroll-area">
-        <h3>Tarifas de Água</h3>
-        <div class="grid-tarifas">
-            <div class="input-group"><label>T. Fixa Água:</label><input type="number" id="tFixa" value="33.50"></div>
-            <div class="input-group"><label>0 a 10m³:</label><input type="number" id="t1" value="1.43"></div>
-            <div class="input-group"><label>11 a 15m³:</label><input type="number" id="t2" value="9.49"></div>
-            <div class="input-group"><label>16 a 25m³:</label><input type="number" id="t3" value="9.54"></div>
-            <div class="input-group"><label>26 a 35m³:</label><input type="number" id="t4" value="12.64"></div>
-            <div class="input-group"><label>Acima 35m³:</label><input type="number" id="t5" value="13.07"></div>
+            <div class="grid-tarifas">
+                <div class="input-group"><label>Fixa Água (R$):</label><input type="number" id="tFixa" value="33.50"></div>
+                <div class="input-group"><label>Fixa Esgoto (R$):</label><input type="number" id="tFixaEsg" value="27.94"></div>
+                <div class="input-group"><label>Faixa 0-10:</label><input type="number" id="t1" value="1.43"></div>
+                <div class="input-group"><label>Faixa 11-15:</label><input type="number" id="t2" value="9.49"></div>
+                <div class="input-group"><label>Faixa 16-25:</label><input type="number" id="t3" value="9.54"></div>
+                <div class="input-group"><label>Faixa 26-35:</label><input type="number" id="t4" value="12.64"></div>
+                <div class="input-group"><label>Acima de 35:</label><input type="number" id="t5" value="13.07"></div>
+                <div class="input-group"><label>% Esgoto:</label><input type="number" id="pEsg" value="100"></div>
+            </div>
         </div>
 
-        <h3>Tarifas de Esgoto</h3>
-        <div class="grid-tarifas">
-            <div class="input-group"><label>T. Fixa Esgoto:</label><input type="number" id="tFixaEsg" value="27.94"></div>
-            <div class="input-group"><label>% Variável:</label><input type="number" id="pEsg" value="100"></div>
-        </div>
-
-        <div id="resultado" style="display:none;">
-            <div id="detalhes"></div>
-            <div class="total" id="valorTotal"></div>
+        <div class="result-side" id="resultadoArea">
+            <div id="instrucao" style="color: #666; text-align: center; margin-top: 100px;">
+                Insira o consumo e clique em calcular para ver o detalhamento.
+            </div>
+            <div id="detalhes" style="display:none;">
+                </div>
+            <div class="total" id="valorTotal" style="display:none;"></div>
         </div>
     </div>
 </div>
@@ -146,15 +174,16 @@ function calcular() {
 
     let consumoRestante = consumo;
     let totalVariavelAgua = 0;
-    let html = `<strong>Detalhamento Água:</strong><br>`;
-    html += `<div class="item-faixa"><span>Tarifa Fixa Água:</span> <span>R$ ${fixaAgua.toFixed(2)}</span></div>`;
+    
+    let html = `<strong style="color:#0056b3">Detalhamento Água</strong><br><br>`;
+    html += `<div class="item-faixa"><span>Taxa Fixa Água:</span> <span>R$ ${fixaAgua.toFixed(2)}</span></div>`;
 
     for (let i = 0; i < tarifas.length; i++) {
         if (consumoRestante > 0) {
             let consumoNaFaixa = Math.min(consumoRestante, limites[i]);
             let custoFaixa = consumoNaFaixa * tarifas[i];
             totalVariavelAgua += custoFaixa;
-            html += `<div class="item-faixa"><span>Faixa ${nomesFaixas[i]} m³:</span> <span>R$ ${custoFaixa.toFixed(2)}</span></div>`;
+            html += `<div class="item-faixa"><span>Consumo ${nomesFaixas[i]} m³:</span> <span>R$ ${custoFaixa.toFixed(2)}</span></div>`;
             consumoRestante -= consumoNaFaixa;
         }
     }
@@ -164,15 +193,21 @@ function calcular() {
     const subEsgoto = fixaEsgoto + subVariavelEsgoto;
     const totalGeral = subAgua + subEsgoto;
 
-    html += `<div class="subtotal-box">Subtotal Água: R$ ${subAgua.toFixed(2)}</div>`;
-    html += `<br><strong>Detalhamento Esgoto:</strong><br>`;
-    html += `<div class="item-faixa"><span>Tarifa Fixa Esgoto:</span> <span>R$ ${fixaEsgoto.toFixed(2)}</span></div>`;
-    html += `<div class="item-faixa"><span>Consumo Esgoto (${(percEsgoto*100)}%):</span> <span>R$ ${subVariavelEsgoto.toFixed(2)}</span></div>`;
-    html += `<div class="subtotal-box">Subtotal Esgoto: R$ ${subEsgoto.toFixed(2)}</div>`;
+    html += `<div class="subtotal-box">Total Água: R$ ${subAgua.toFixed(2)}</div>`;
+    html += `<br><strong style="color:#0056b3">Detalhamento Esgoto</strong><br><br>`;
+    html += `<div class="item-faixa"><span>Taxa Fixa Esgoto:</span> <span>R$ ${fixaEsgoto.toFixed(2)}</span></div>`;
+    html += `<div class="item-faixa"><span>Variável Esgoto (${(percEsgoto*100)}%):</span> <span>R$ ${subVariavelEsgoto.toFixed(2)}</span></div>`;
+    html += `<div class="subtotal-box">Total Esgoto: R$ ${subEsgoto.toFixed(2)}</div>`;
 
-    document.getElementById('detalhes').innerHTML = html;
-    document.getElementById('valorTotal').innerHTML = `TOTAL CONTA: R$ ${totalGeral.toFixed(2)}`;
-    document.getElementById('resultado').style.display = 'block';
+    document.getElementById('instrucao').style.display = 'none';
+    const detalhesDiv = document.getElementById('detalhes');
+    const totalDiv = document.getElementById('valorTotal');
+    
+    detalhesDiv.innerHTML = html;
+    detalhesDiv.style.display = 'block';
+    
+    totalDiv.innerHTML = `TOTAL: R$ ${totalGeral.toFixed(2)}`;
+    totalDiv.style.display = 'block';
 }
 </script>
 
